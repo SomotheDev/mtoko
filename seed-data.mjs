@@ -1,0 +1,240 @@
+import { drizzle } from "drizzle-orm/mysql2";
+import { categories, products } from "./drizzle/schema.ts";
+
+const db = drizzle(process.env.DATABASE_URL);
+
+async function seed() {
+  console.log("Seeding database...");
+
+  // Insert categories
+  const categoriesData = [
+    { name: "Leggings", slug: "leggings", gender: "women" },
+    { name: "Sports Bras", slug: "sports-bras", gender: "women" },
+    { name: "Hoodies & Sweatshirts", slug: "hoodies-sweatshirts", gender: "women" },
+    { name: "Shorts", slug: "shorts-women", gender: "women" },
+    { name: "T-Shirts & Tops", slug: "tshirts-tops-women", gender: "women" },
+    { name: "T-Shirts & Tops", slug: "tshirts-tops-men", gender: "men" },
+    { name: "Shorts", slug: "shorts-men", gender: "men" },
+    { name: "Hoodies & Sweatshirts", slug: "hoodies-sweatshirts-men", gender: "men" },
+    { name: "Joggers", slug: "joggers", gender: "men" },
+    { name: "Tank Tops", slug: "tank-tops", gender: "men" },
+    { name: "Accessories", slug: "accessories", gender: "unisex" },
+  ];
+
+  await db.insert(categories).values(categoriesData);
+  console.log("Categories seeded!");
+
+  // Insert sample products
+  const productsData = [
+    // Women's Products
+    {
+      name: "Cosy Luxe Straight Leg Joggers",
+      slug: "cosy-luxe-straight-leg-joggers",
+      description: "Our softest yet. Perfect for lounging or light workouts.",
+      price: 5600,
+      categoryId: 1,
+      gender: "women",
+      images: JSON.stringify(["/images/products/women-joggers-1.jpg"]),
+      sizes: JSON.stringify(["XS", "S", "M", "L", "XL"]),
+      colors: JSON.stringify(["Rich Maroon", "Black", "Grey"]),
+      tags: JSON.stringify(["new", "our softest yet", "oversized fit"]),
+      featured: 1,
+      inStock: 1,
+    },
+    {
+      name: "Cosy Luxe Hoodie",
+      slug: "cosy-luxe-hoodie",
+      description: "Oversized fit hoodie in our softest fabric.",
+      price: 6000,
+      categoryId: 3,
+      gender: "women",
+      images: JSON.stringify(["/images/products/women-hoodie-1.jpg"]),
+      sizes: JSON.stringify(["XS", "S", "M", "L", "XL"]),
+      colors: JSON.stringify(["Rich Maroon", "Black", "Grey Marl"]),
+      tags: JSON.stringify(["new", "our softest yet", "oversized fit"]),
+      featured: 1,
+      inStock: 1,
+    },
+    {
+      name: "Cosy Luxe Sweatshirt",
+      slug: "cosy-luxe-sweatshirt",
+      description: "Comfortable sweatshirt for everyday wear.",
+      price: 5000,
+      categoryId: 3,
+      gender: "women",
+      images: JSON.stringify(["/images/products/women-sweatshirt-1.jpg"]),
+      sizes: JSON.stringify(["XS", "S", "M", "L", "XL"]),
+      colors: JSON.stringify(["Rich Maroon", "Black"]),
+      tags: JSON.stringify(["new", "oversized fit"]),
+      featured: 1,
+      inStock: 1,
+    },
+    {
+      name: "High-Waisted Seamless Leggings",
+      slug: "high-waisted-seamless-leggings",
+      description: "Seamless construction for maximum comfort and flexibility.",
+      price: 4500,
+      categoryId: 1,
+      gender: "women",
+      images: JSON.stringify(["/images/products/women-leggings-1.jpg"]),
+      sizes: JSON.stringify(["XS", "S", "M", "L", "XL"]),
+      colors: JSON.stringify(["Black", "Navy", "Burgundy"]),
+      tags: JSON.stringify(["bestseller", "high-waisted"]),
+      featured: 0,
+      inStock: 1,
+    },
+    {
+      name: "Vital Seamless Sports Bra",
+      slug: "vital-seamless-sports-bra",
+      description: "High support sports bra for intense workouts.",
+      price: 3500,
+      categoryId: 2,
+      gender: "women",
+      images: JSON.stringify(["/images/products/women-sports-bra-1.jpg"]),
+      sizes: JSON.stringify(["XS", "S", "M", "L", "XL"]),
+      colors: JSON.stringify(["Black", "White", "Pink"]),
+      tags: JSON.stringify(["high impact"]),
+      featured: 0,
+      inStock: 1,
+    },
+    {
+      name: "Training Shorts",
+      slug: "training-shorts-women",
+      description: "Lightweight shorts perfect for any workout.",
+      price: 3000,
+      categoryId: 4,
+      gender: "women",
+      images: JSON.stringify(["/images/products/women-shorts-1.jpg"]),
+      sizes: JSON.stringify(["XS", "S", "M", "L", "XL"]),
+      colors: JSON.stringify(["Black", "Grey", "Navy"]),
+      tags: JSON.stringify([]),
+      featured: 0,
+      inStock: 1,
+    },
+    // Men's Products
+    {
+      name: "Fade Graphic Zip Up Hoodie",
+      slug: "fade-graphic-zip-up-hoodie",
+      description: "Extreme oversized fit with bold graphics.",
+      price: 8500,
+      categoryId: 8,
+      gender: "men",
+      images: JSON.stringify(["/images/products/men-hoodie-1.jpg"]),
+      sizes: JSON.stringify(["S", "M", "L", "XL", "XXL"]),
+      colors: JSON.stringify(["Black", "Light Grey Core Marl"]),
+      tags: JSON.stringify(["new", "extreme oversized fit"]),
+      featured: 1,
+      inStock: 1,
+    },
+    {
+      name: "Fade Graphic Straight Leg Jogger",
+      slug: "fade-graphic-straight-leg-jogger",
+      description: "Oversized fit joggers with graphic details.",
+      price: 8000,
+      categoryId: 9,
+      gender: "men",
+      images: JSON.stringify(["/images/products/men-joggers-1.jpg"]),
+      sizes: JSON.stringify(["S", "M", "L", "XL", "XXL"]),
+      colors: JSON.stringify(["GS Black", "Light Grey Core Marl"]),
+      tags: JSON.stringify(["new", "oversized fit"]),
+      featured: 1,
+      inStock: 1,
+    },
+    {
+      name: "Fade Graphic Crew",
+      slug: "fade-graphic-crew",
+      description: "Oversized crew neck with bold branding.",
+      price: 7000,
+      categoryId: 8,
+      gender: "men",
+      images: JSON.stringify(["/images/products/men-crew-1.jpg"]),
+      sizes: JSON.stringify(["S", "M", "L", "XL", "XXL"]),
+      colors: JSON.stringify(["GS Black", "Light Grey Core Marl"]),
+      tags: JSON.stringify(["new", "oversized fit"]),
+      featured: 1,
+      inStock: 1,
+    },
+    {
+      name: "Power T-Shirt",
+      slug: "power-tshirt",
+      description: "Muscle fit shirt for maximum performance.",
+      price: 3600,
+      categoryId: 6,
+      gender: "men",
+      images: JSON.stringify(["/images/products/men-tshirt-1.jpg"]),
+      sizes: JSON.stringify(["S", "M", "L", "XL", "XXL"]),
+      colors: JSON.stringify(["Black", "White", "Grey"]),
+      tags: JSON.stringify(["muscle fit"]),
+      featured: 0,
+      inStock: 1,
+    },
+    {
+      name: "Training Shorts",
+      slug: "training-shorts-men",
+      description: "Comfortable shorts with pockets.",
+      price: 3500,
+      categoryId: 7,
+      gender: "men",
+      images: JSON.stringify(["/images/products/men-shorts-1.jpg"]),
+      sizes: JSON.stringify(["S", "M", "L", "XL", "XXL"]),
+      colors: JSON.stringify(["Black", "Navy", "Grey"]),
+      tags: JSON.stringify(["with pockets"]),
+      featured: 0,
+      inStock: 1,
+    },
+    {
+      name: "Essential Tank Top",
+      slug: "essential-tank-top",
+      description: "Classic tank top for gym sessions.",
+      price: 2500,
+      categoryId: 10,
+      gender: "men",
+      images: JSON.stringify(["/images/products/men-tank-1.jpg"]),
+      sizes: JSON.stringify(["S", "M", "L", "XL", "XXL"]),
+      colors: JSON.stringify(["Black", "White", "Grey"]),
+      tags: JSON.stringify([]),
+      featured: 0,
+      inStock: 1,
+    },
+    // Accessories
+    {
+      name: "Water Bottle",
+      slug: "water-bottle",
+      description: "1L water bottle with straw.",
+      price: 1800,
+      categoryId: 11,
+      gender: "unisex",
+      images: JSON.stringify(["/images/products/water-bottle.jpg"]),
+      sizes: JSON.stringify(["One Size"]),
+      colors: JSON.stringify(["Athletic Burgundy", "Black"]),
+      tags: JSON.stringify(["with straw"]),
+      featured: 0,
+      inStock: 1,
+    },
+    {
+      name: "Gym Bag",
+      slug: "gym-bag",
+      description: "Spacious gym bag with multiple compartments.",
+      price: 3000,
+      categoryId: 11,
+      gender: "unisex",
+      images: JSON.stringify(["/images/products/gym-bag.jpg"]),
+      sizes: JSON.stringify(["One Size"]),
+      colors: JSON.stringify(["Black", "Grey"]),
+      tags: JSON.stringify(["new"]),
+      featured: 0,
+      inStock: 1,
+    },
+  ];
+
+  await db.insert(products).values(productsData);
+  console.log("Products seeded!");
+
+  console.log("Seeding complete!");
+  process.exit(0);
+}
+
+seed().catch((error) => {
+  console.error("Seeding failed:", error);
+  process.exit(1);
+});

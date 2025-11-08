@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, products, categories, cartItems, wishlistItems, orders, orderItems } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,143 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Product queries
+export async function getAllProducts() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(products);
+}
+
+export async function getProductsByGender(gender: "women" | "men" | "unisex") {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(products).where(eq(products.gender, gender));
+}
+
+export async function getProductBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(products).where(eq(products.slug, slug)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getFeaturedProducts() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(products).where(eq(products.featured, 1));
+}
+
+export async function getProductsByCategory(categoryId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(products).where(eq(products.categoryId, categoryId));
+}
+
+// Category queries
+export async function getAllCategories() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(categories);
+}
+
+export async function getCategoriesByGender(gender: "women" | "men" | "unisex") {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(categories).where(eq(categories.gender, gender));
+}
+
+// Cart queries
+export async function getCartItems(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const items = await db
+    .select({
+      id: cartItems.id,
+      userId: cartItems.userId,
+      productId: cartItems.productId,
+      quantity: cartItems.quantity,
+      size: cartItems.size,
+      color: cartItems.color,
+      createdAt: cartItems.createdAt,
+      updatedAt: cartItems.updatedAt,
+      product: products,
+    })
+    .from(cartItems)
+    .innerJoin(products, eq(cartItems.productId, products.id))
+    .where(eq(cartItems.userId, userId));
+  return items;
+}
+
+export async function addToCart(userId: number, productId: number, quantity: number, size?: string, color?: string) {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(cartItems).values({ userId, productId, quantity, size, color });
+}
+
+export async function updateCartItem(itemId: number, quantity: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(cartItems).set({ quantity }).where(eq(cartItems.id, itemId));
+}
+
+export async function removeFromCart(itemId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(cartItems).where(eq(cartItems.id, itemId));
+}
+
+export async function clearCart(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(cartItems).where(eq(cartItems.userId, userId));
+}
+
+// Wishlist queries
+export async function getWishlistItems(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const items = await db
+    .select({
+      id: wishlistItems.id,
+      userId: wishlistItems.userId,
+      productId: wishlistItems.productId,
+      createdAt: wishlistItems.createdAt,
+      product: products,
+    })
+    .from(wishlistItems)
+    .innerJoin(products, eq(wishlistItems.productId, products.id))
+    .where(eq(wishlistItems.userId, userId));
+  return items;
+}
+
+export async function addToWishlist(userId: number, productId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(wishlistItems).values({ userId, productId });
+}
+
+export async function removeFromWishlist(itemId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(wishlistItems).where(eq(wishlistItems.id, itemId));
+}
+
+// Order queries
+export async function getUserOrders(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(orders).where(eq(orders.userId, userId));
+}
+
+export async function createOrder(userId: number, totalAmount: number, shippingAddress: string) {
+  const db = await getDb();
+  if (!db) return;
+  const result = await db.insert(orders).values({ userId, totalAmount, shippingAddress });
+  return result;
+}
+
+export async function getOrderItems(orderId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+}

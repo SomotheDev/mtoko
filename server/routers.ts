@@ -1,7 +1,8 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { z } from "zod";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -17,12 +18,128 @@ export const appRouter = router({
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  products: router({
+    getAll: publicProcedure.query(async () => {
+      const db = await import('./db');
+      return db.getAllProducts();
+    }),
+    getByGender: publicProcedure
+      .input(z.object({ gender: z.enum(["women", "men", "unisex"]) }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.getProductsByGender(input.gender);
+      }),
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.getProductBySlug(input.slug);
+      }),
+    getFeatured: publicProcedure.query(async () => {
+      const db = await import('./db');
+      return db.getFeaturedProducts();
+    }),
+    getByCategory: publicProcedure
+      .input(z.object({ categoryId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.getProductsByCategory(input.categoryId);
+      }),
+  }),
+
+  categories: router({
+    getAll: publicProcedure.query(async () => {
+      const db = await import('./db');
+      return db.getAllCategories();
+    }),
+    getByGender: publicProcedure
+      .input(z.object({ gender: z.enum(["women", "men", "unisex"]) }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.getCategoriesByGender(input.gender);
+      }),
+  }),
+
+  cart: router({
+    getItems: protectedProcedure.query(async ({ ctx }) => {
+      const db = await import('./db');
+      return db.getCartItems(ctx.user.id);
+    }),
+    addItem: protectedProcedure
+      .input(z.object({
+        productId: z.number(),
+        quantity: z.number().min(1),
+        size: z.string().optional(),
+        color: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await import('./db');
+        await db.addToCart(ctx.user.id, input.productId, input.quantity, input.size, input.color);
+        return { success: true };
+      }),
+    updateItem: protectedProcedure
+      .input(z.object({ itemId: z.number(), quantity: z.number().min(1) }))
+      .mutation(async ({ input }) => {
+        const db = await import('./db');
+        await db.updateCartItem(input.itemId, input.quantity);
+        return { success: true };
+      }),
+    removeItem: protectedProcedure
+      .input(z.object({ itemId: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await import('./db');
+        await db.removeFromCart(input.itemId);
+        return { success: true };
+      }),
+    clear: protectedProcedure.mutation(async ({ ctx }) => {
+      const db = await import('./db');
+      await db.clearCart(ctx.user.id);
+      return { success: true };
+    }),
+  }),
+
+  wishlist: router({
+    getItems: protectedProcedure.query(async ({ ctx }) => {
+      const db = await import('./db');
+      return db.getWishlistItems(ctx.user.id);
+    }),
+    addItem: protectedProcedure
+      .input(z.object({ productId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await import('./db');
+        await db.addToWishlist(ctx.user.id, input.productId);
+        return { success: true };
+      }),
+    removeItem: protectedProcedure
+      .input(z.object({ itemId: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await import('./db');
+        await db.removeFromWishlist(input.itemId);
+        return { success: true };
+      }),
+  }),
+
+  orders: router({
+    getUserOrders: protectedProcedure.query(async ({ ctx }) => {
+      const db = await import('./db');
+      return db.getUserOrders(ctx.user.id);
+    }),
+    getOrderItems: protectedProcedure
+      .input(z.object({ orderId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.getOrderItems(input.orderId);
+      }),
+    createOrder: protectedProcedure
+      .input(z.object({
+        totalAmount: z.number(),
+        shippingAddress: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await import('./db');
+        return db.createOrder(ctx.user.id, input.totalAmount, input.shippingAddress);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
