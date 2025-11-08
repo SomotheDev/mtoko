@@ -80,7 +80,7 @@ export default function ProductDetail() {
   const sizes = JSON.parse(product.sizes);
   const colors = JSON.parse(product.colors);
   const tags = product.tags ? JSON.parse(product.tags) : [];
-  const priceInDollars = (product.price / 100).toFixed(2);
+  const priceInTzs = (product.price / 100).toLocaleString();
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
@@ -154,7 +154,7 @@ export default function ProductDetail() {
                 <h1 className="text-3xl md:text-4xl font-black uppercase mb-2">
                   {product.name}
                 </h1>
-                <p className="text-2xl font-bold">${priceInDollars}</p>
+                <p className="text-2xl font-bold">Tzs {priceInTzs}</p>
               </div>
 
               {product.description && (

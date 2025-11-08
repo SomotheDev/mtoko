@@ -91,7 +91,7 @@ export default function Cart() {
   }
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const shipping = subtotal > 7500 ? 0 : 500; // Free shipping over $75
+  const shipping = subtotal > 75000 ? 0 : 5000; // Free shipping over Tzs 75,000
   const total = subtotal + shipping;
 
   return (
@@ -107,8 +107,8 @@ export default function Cart() {
             <div className="lg:col-span-2 space-y-6">
               {cartItems.map((item) => {
                 const images = JSON.parse(item.product.images);
-                const priceInDollars = (item.product.price / 100).toFixed(2);
-                const totalPrice = ((item.product.price * item.quantity) / 100).toFixed(2);
+                const priceInTzs = (item.product.price / 100).toLocaleString();
+                const totalPrice = ((item.product.price * item.quantity) / 100).toLocaleString();
 
                 return (
                   <div key={item.id} className="flex gap-4 border-b border-border pb-6">
@@ -133,7 +133,7 @@ export default function Cart() {
                         {item.size && item.color && <span> | </span>}
                         {item.color && <span>Color: {item.color}</span>}
                       </p>
-                      <p className="font-bold">${priceInDollars}</p>
+                      <p className="font-bold">Tzs {priceInTzs}</p>
 
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ export default function Cart() {
                     </div>
 
                     <div className="text-right">
-                      <p className="font-bold">${totalPrice}</p>
+                      <p className="font-bold">Tzs {totalPrice}</p>
                     </div>
                   </div>
                 );
@@ -200,15 +200,15 @@ export default function Cart() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal</span>
-                    <span>${(subtotal / 100).toFixed(2)}</span>
+                    <span>Tzs {(subtotal / 100).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Shipping</span>
-                    <span>{shipping === 0 ? "FREE" : `$${(shipping / 100).toFixed(2)}`}</span>
+                    <span>{shipping === 0 ? "FREE" : `Tzs ${(shipping / 100).toLocaleString()}`}</span>
                   </div>
                   {shipping > 0 && (
                     <p className="text-xs text-muted-foreground">
-                      Add ${((7500 - subtotal) / 100).toFixed(2)} more for free shipping
+                      Add Tzs {((75000 - subtotal) / 100).toLocaleString()} more for free shipping
                     </p>
                   )}
                 </div>
@@ -216,7 +216,7 @@ export default function Cart() {
                 <div className="border-t border-border pt-4">
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span>${(total / 100).toFixed(2)}</span>
+                    <span>Tzs {(total / 100).toLocaleString()}</span>
                   </div>
                 </div>
 

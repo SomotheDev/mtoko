@@ -14,7 +14,7 @@ export default function Header() {
     <>
       {/* Announcement Bar */}
       <div className="bg-secondary text-foreground text-center py-2 text-sm font-medium">
-        Free standard shipping on orders over $75 🚚
+        Free standard shipping on orders over Tzs 75,000 🚚
       </div>
 
       {/* Main Header */}

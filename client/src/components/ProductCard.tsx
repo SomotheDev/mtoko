@@ -12,7 +12,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, onWishlistToggle }: ProductCardProps) {
   const images = JSON.parse(product.images);
   const tags = product.tags ? JSON.parse(product.tags) : [];
-  const priceInDollars = (product.price / 100).toFixed(2);
+  const priceInTzs = (product.price / 100).toLocaleString();
 
   return (
     <Card className="group relative overflow-hidden border-0 shadow-none bg-transparent">
@@ -59,7 +59,7 @@ export default function ProductCard({ product, onWishlistToggle }: ProductCardPr
           <h3 className="text-sm font-semibold line-clamp-2 group-hover:text-muted-foreground transition-colors">
             {product.name}
           </h3>
-          <p className="text-sm font-bold">${priceInDollars}</p>
+          <p className="text-sm font-bold">Tzs {priceInTzs}</p>
         </div>
       </Link>
     </Card>

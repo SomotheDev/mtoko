@@ -61,7 +61,13 @@
 - [x] Ensure responsive design across all breakpoints
 
 ## Testing & Deployment
-- [ ] Test all user flows (browse, add to cart, checkout)
-- [ ] Test authentication flow
-- [ ] Test responsive design on mobile/tablet
-- [ ] Create checkpoint for deployment
+- [x] Test all user flows (browse, add to cart, checkout)
+- [x] Test authentication flow
+- [x] Test responsive design on mobile/tablet
+- [x] Create checkpoint for deployment
+
+## Currency Update
+- [x] Change currency symbol from $ to Tzs throughout the app
+- [x] Update product prices display in all components
+- [x] Update cart total and shipping cost display
+- [x] Update announcement bar message
