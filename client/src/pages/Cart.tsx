@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Trash2, Plus, Minus } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -9,6 +9,7 @@ import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 
 export default function Cart() {
+  const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
   const { data: cartItems, isLoading } = trpc.cart.getItems.useQuery(undefined, {
     enabled: isAuthenticated,
@@ -220,8 +221,12 @@ export default function Cart() {
                   </div>
                 </div>
 
-                <Button size="lg" className="w-full font-bold uppercase">
-                  Checkout
+                <Button 
+                  size="lg" 
+                  className="w-full font-bold uppercase"
+                  onClick={() => setLocation("/checkout")}
+                >
+                  Proceed to Checkout
                 </Button>
 
                 <Link href="/">

@@ -219,9 +219,44 @@ export async function getUserOrders(userId: number) {
 
 export async function createOrder(userId: number, totalAmount: number, shippingAddress: string) {
   const db = await getDb();
-  if (!db) return;
+  if (!db) throw new Error("Database not available");
+  
+  // Create the order
   const result = await db.insert(orders).values({ userId, totalAmount, shippingAddress });
-  return result;
+  const orderId = Number((result as any).insertId);
+  
+  // Get cart items with product prices
+  const cartItemsList = await db
+    .select({
+      id: cartItems.id,
+      productId: cartItems.productId,
+      quantity: cartItems.quantity,
+      size: cartItems.size,
+      color: cartItems.color,
+      price: products.price,
+    })
+    .from(cartItems)
+    .innerJoin(products, eq(cartItems.productId, products.id))
+    .where(eq(cartItems.userId, userId));
+  
+  // Create order items from cart
+  if (cartItemsList.length > 0) {
+    await db.insert(orderItems).values(
+      cartItemsList.map(item => ({
+        orderId,
+        productId: item.productId,
+        quantity: item.quantity,
+        priceAtPurchase: item.price,
+        size: item.size,
+        color: item.color,
+      }))
+    );
+    
+    // Clear the cart
+    await db.delete(cartItems).where(eq(cartItems.userId, userId));
+  }
+  
+  return { orderId };
 }
 
 export async function getOrderItems(orderId: number) {
