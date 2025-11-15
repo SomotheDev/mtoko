@@ -83,7 +83,7 @@
 - [x] Test complete user journey from browse to order confirmation
 
 ## GitHub Repository Setup
-- [ ] Create GitHub repository for mtoko
-- [ ] Initialize git in project directory
-- [ ] Push all code to GitHub
-- [ ] Set up automatic commits for future changes
+- [x] Create GitHub repository for mtoko
+- [x] Initialize git in project directory
+- [x] Push all code to GitHub
+- [x] Set up automatic commits for future changes
