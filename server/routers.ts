@@ -45,6 +45,12 @@ export const appRouter = router({
         const db = await import('./db');
         return db.getProductsByCategory(input.categoryId);
       }),
+    search: publicProcedure
+      .input(z.object({ query: z.string() }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.searchProducts(input.query);
+      }),
   }),
 
   categories: router({

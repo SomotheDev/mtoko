@@ -121,6 +121,22 @@ export async function getProductsByCategory(categoryId: number) {
   return await db.select().from(products).where(eq(products.categoryId, categoryId));
 }
 
+export async function searchProducts(query: string) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const searchTerm = `%${query.toLowerCase()}%`;
+  const { like, or } = await import('drizzle-orm');
+  
+  return await db.select().from(products).where(
+    or(
+      like(products.name, searchTerm),
+      like(products.description, searchTerm),
+      like(products.tags, searchTerm)
+    )
+  );
+}
+
 // Category queries
 export async function getAllCategories() {
   const db = await getDb();

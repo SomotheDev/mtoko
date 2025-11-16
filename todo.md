@@ -100,3 +100,11 @@
 - [x] Update product prices in database to thousands of Tzs (realistic apparel pricing)
 - [x] Test price display across all pages
 - [x] Commit and push changes to GitHub
+
+## Product Search Functionality
+- [x] Add search procedure in backend to filter products by name and category
+- [x] Create search results page
+- [x] Implement search input in header with live search
+- [x] Add search icon and functionality
+- [x] Test search with various queries
+- [ ] Commit and push changes to GitHub
