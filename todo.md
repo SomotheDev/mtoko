@@ -94,4 +94,4 @@
 - [x] Generate category image for Accessories section
 - [x] Update Home.tsx to display category images
 - [x] Test category section display
-- [ ] Commit and push changes to GitHub
+- [x] Commit and push changes to GitHub
