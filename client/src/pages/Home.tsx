@@ -131,6 +131,11 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Link href="/women">
                 <div className="group relative h-80 overflow-hidden bg-secondary cursor-pointer">
+                  <img
+                    src="/images/category-women.jpg"
+                    alt="Women's Collection"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                   <div className="absolute bottom-6 left-6 z-20">
                     <h3 className="text-2xl font-black uppercase mb-2">Women</h3>
@@ -142,6 +147,11 @@ export default function Home() {
               </Link>
               <Link href="/men">
                 <div className="group relative h-80 overflow-hidden bg-secondary cursor-pointer">
+                  <img
+                    src="/images/category-men.jpg"
+                    alt="Men's Collection"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                   <div className="absolute bottom-6 left-6 z-20">
                     <h3 className="text-2xl font-black uppercase mb-2">Men</h3>
@@ -153,6 +163,11 @@ export default function Home() {
               </Link>
               <Link href="/accessories">
                 <div className="group relative h-80 overflow-hidden bg-secondary cursor-pointer">
+                  <img
+                    src="/images/category-accessories.jpg"
+                    alt="Accessories Collection"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                   <div className="absolute bottom-6 left-6 z-20">
                     <h3 className="text-2xl font-black uppercase mb-2">Accessories</h3>
