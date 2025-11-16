@@ -64,14 +64,27 @@ export default function ProductCard({ product, onWishlistToggle }: ProductCardPr
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
+        </div>
+      </Link>
+
+      {/* Product Info */}
+      <div className="mt-3 space-y-2">
+        <Link href={`/product/${product.slug}`}>
+          <h3 className="text-sm font-semibold line-clamp-2 group-hover:text-muted-foreground transition-colors">
+            {product.name}
+          </h3>
+        </Link>
+        
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-bold">Tzs {priceInTzs}</p>
           
           {/* Tags */}
           {tags.length > 0 && (
-            <div className="absolute top-2 left-2 flex flex-col gap-1">
+            <div className="flex gap-1">
               {tags.slice(0, 2).map((tag: string, index: number) => (
                 <span
                   key={index}
-                  className="bg-background/90 text-foreground text-xs px-2 py-1 uppercase font-medium"
+                  className="bg-secondary text-foreground text-xs px-2 py-0.5 uppercase font-medium"
                 >
                   {tag}
                 </span>
@@ -79,41 +92,33 @@ export default function ProductCard({ product, onWishlistToggle }: ProductCardPr
             </div>
           )}
         </div>
-      </Link>
 
-      {/* Action Buttons */}
-      <div className="absolute top-2 right-2 flex flex-col gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="bg-background/90 hover:bg-background"
-          onClick={(e) => {
-            e.preventDefault();
-            onWishlistToggle?.(product.id);
-          }}
-        >
-          <Heart className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="bg-background/90 hover:bg-background"
-          onClick={handleQuickAdd}
-          disabled={isAdding}
-        >
-          <ShoppingBag className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Product Info */}
-      <Link href={`/product/${product.slug}`}>
-        <div className="mt-3 space-y-1">
-          <h3 className="text-sm font-semibold line-clamp-2 group-hover:text-muted-foreground transition-colors">
-            {product.name}
-          </h3>
-          <p className="text-sm font-bold">Tzs {priceInTzs}</p>
+        {/* Action Buttons */}
+        <div className="flex gap-2 pt-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 h-9"
+            onClick={(e) => {
+              e.preventDefault();
+              onWishlistToggle?.(product.id);
+            }}
+          >
+            <Heart className="h-4 w-4 mr-1" />
+            Save
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            className="flex-1 h-9"
+            onClick={handleQuickAdd}
+            disabled={isAdding}
+          >
+            <ShoppingBag className="h-4 w-4 mr-1" />
+            {isAdding ? "Adding..." : "Add"}
+          </Button>
         </div>
-      </Link>
+      </div>
     </Card>
   );
 }
