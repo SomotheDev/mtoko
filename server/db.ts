@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, categories, cartItems, wishlistItems, orders, orderItems } from "../drizzle/schema";
+import { InsertUser, users, products, categories, cartItems, wishlistItems, orders, orderItems, reviews, InsertReview } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -279,4 +279,72 @@ export async function getOrderItems(orderId: number) {
   const db = await getDb();
   if (!db) return [];
   return await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+}
+
+// Review queries
+export async function getProductReviews(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const reviewsWithUsers = await db
+    .select({
+      id: reviews.id,
+      productId: reviews.productId,
+      userId: reviews.userId,
+      rating: reviews.rating,
+      comment: reviews.comment,
+      createdAt: reviews.createdAt,
+      updatedAt: reviews.updatedAt,
+      userName: users.name,
+    })
+    .from(reviews)
+    .leftJoin(users, eq(reviews.userId, users.id))
+    .where(eq(reviews.productId, productId))
+    .orderBy(reviews.createdAt);
+  
+  return reviewsWithUsers;
+}
+
+export async function getProductAverageRating(productId: number) {
+  const db = await getDb();
+  if (!db) return { averageRating: 0, reviewCount: 0 };
+  
+  const { avg, count } = await import('drizzle-orm');
+  const result = await db
+    .select({
+      averageRating: avg(reviews.rating),
+      reviewCount: count(reviews.id),
+    })
+    .from(reviews)
+    .where(eq(reviews.productId, productId));
+  
+  return {
+    averageRating: result[0]?.averageRating ? Number(result[0].averageRating) : 0,
+    reviewCount: result[0]?.reviewCount ? Number(result[0].reviewCount) : 0,
+  };
+}
+
+export async function createReview(review: InsertReview) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(reviews).values(review);
+  return { success: true };
+}
+
+export async function hasUserReviewedProduct(userId: number, productId: number) {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const { and } = await import('drizzle-orm');
+  const result = await db
+    .select()
+    .from(reviews)
+    .where(and(
+      eq(reviews.userId, userId),
+      eq(reviews.productId, productId)
+    ))
+    .limit(1);
+  
+  return result.length > 0;
 }

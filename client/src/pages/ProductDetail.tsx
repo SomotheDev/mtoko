@@ -9,6 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import StarRating from "@/components/StarRating";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:slug");
@@ -20,6 +23,18 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+
+  const { data: reviews } = trpc.reviews.getProductReviews.useQuery(
+    { productId: product?.id || 0 },
+    { enabled: !!product }
+  );
+  
+  const { data: rating } = trpc.reviews.getProductRating.useQuery(
+    { productId: product?.id || 0 },
+    { enabled: !!product }
+  );
 
   const addToCartMutation = trpc.cart.addItem.useMutation({
     onSuccess: () => {
@@ -36,6 +51,20 @@ export default function ProductDetail() {
     },
     onError: () => {
       toast.error("Failed to add to wishlist");
+    },
+  });
+
+  const utils = trpc.useUtils();
+  const createReviewMutation = trpc.reviews.createReview.useMutation({
+    onSuccess: () => {
+      toast.success("Review submitted!");
+      setReviewRating(5);
+      setReviewComment("");
+      utils.reviews.getProductReviews.invalidate({ productId: product?.id || 0 });
+      utils.reviews.getProductRating.invalidate({ productId: product?.id || 0 });
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to submit review");
     },
   });
 
@@ -266,6 +295,107 @@ export default function ProductDetail() {
                     {product.inStock ? "In Stock" : "Out of Stock"}
                   </span>
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Reviews Section */}
+          <div className="mt-16 max-w-4xl mx-auto">
+            <div className="border-t border-border pt-12">
+              <h2 className="text-2xl font-black uppercase mb-6">Customer Reviews</h2>
+              
+              {/* Rating Summary */}
+              {rating && rating.reviewCount > 0 && (
+                <div className="mb-8 p-6 bg-secondary">
+                  <div className="flex items-center gap-4">
+                    <div className="text-4xl font-black">
+                      {rating.averageRating.toFixed(1)}
+                    </div>
+                    <div>
+                      <StarRating rating={rating.averageRating} size="lg" />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Based on {rating.reviewCount} {rating.reviewCount === 1 ? "review" : "reviews"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Review Form */}
+              {isAuthenticated && (
+                <Card className="p-6 mb-8">
+                  <h3 className="text-lg font-bold uppercase mb-4">Write a Review</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-semibold mb-2 block">Rating</label>
+                      <StarRating
+                        rating={reviewRating}
+                        size="lg"
+                        interactive
+                        onRatingChange={setReviewRating}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-semibold mb-2 block">Comment (Optional)</label>
+                      <Textarea
+                        value={reviewComment}
+                        onChange={(e) => setReviewComment(e.target.value)}
+                        placeholder="Share your thoughts about this product..."
+                        rows={4}
+                      />
+                    </div>
+                    <Button
+                      onClick={() => {
+                        if (product) {
+                          createReviewMutation.mutate({
+                            productId: product.id,
+                            rating: reviewRating,
+                            comment: reviewComment || undefined,
+                          });
+                        }
+                      }}
+                      disabled={createReviewMutation.isPending}
+                      className="w-full font-bold uppercase"
+                    >
+                      Submit Review
+                    </Button>
+                  </div>
+                </Card>
+              )}
+
+              {!isAuthenticated && (
+                <Card className="p-6 mb-8 text-center">
+                  <p className="text-muted-foreground mb-4">Please log in to write a review</p>
+                  <Button onClick={() => window.location.href = getLoginUrl()}>
+                    Log In
+                  </Button>
+                </Card>
+              )}
+
+              {/* Reviews List */}
+              <div className="space-y-6">
+                {reviews && reviews.length > 0 ? (
+                  reviews.map((review) => (
+                    <Card key={review.id} className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="font-semibold">{review.userName || "Anonymous"}</p>
+                          <StarRating rating={review.rating} size="sm" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      {review.comment && (
+                        <p className="text-muted-foreground">{review.comment}</p>
+                      )}
+                    </Card>
+                  ))
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">
+                    No reviews yet. Be the first to review this product!
+                  </p>
+                )}
               </div>
             </div>
           </div>

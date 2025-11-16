@@ -108,3 +108,20 @@
 - [x] Add search icon and functionality
 - [x] Test search with various queries
 - [x] Commit and push changes to GitHub
+
+## Product Card Quick Add to Cart
+- [x] Add "Add to Cart" icon/button to ProductCard component
+- [x] Implement quick add to cart functionality (default size selection)
+- [x] Add loading state and success feedback
+- [x] Test quick add to cart on all product listing pages
+
+## Product Review and Rating System
+- [x] Create reviews table in database schema
+- [x] Add database helper functions for reviews (create, get by product, get average rating)
+- [x] Add tRPC procedures for review operations
+- [x] Update product detail page to display average rating and review count
+- [x] Add review submission form on product detail page
+- [x] Display list of reviews with ratings on product detail page
+- [x] Add star rating component
+- [x] Test review submission and display
+- [ ] Commit and push all changes to GitHub

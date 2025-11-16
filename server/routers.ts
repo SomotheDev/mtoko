@@ -146,6 +146,41 @@ export const appRouter = router({
         return db.createOrder(ctx.user.id, input.totalAmount, input.shippingAddress);
       }),
   }),
+
+  reviews: router({
+    getProductReviews: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.getProductReviews(input.productId);
+      }),
+    getProductRating: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await import('./db');
+        return db.getProductAverageRating(input.productId);
+      }),
+    createReview: protectedProcedure
+      .input(z.object({
+        productId: z.number(),
+        rating: z.number().min(1).max(5),
+        comment: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await import('./db');
+        // Check if user already reviewed this product
+        const hasReviewed = await db.hasUserReviewedProduct(ctx.user.id, input.productId);
+        if (hasReviewed) {
+          throw new Error("You have already reviewed this product");
+        }
+        return db.createReview({
+          userId: ctx.user.id,
+          productId: input.productId,
+          rating: input.rating,
+          comment: input.comment,
+        });
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
