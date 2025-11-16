@@ -124,4 +124,4 @@
 - [x] Display list of reviews with ratings on product detail page
 - [x] Add star rating component
 - [x] Test review submission and display
-- [ ] Commit and push all changes to GitHub
+- [x] Commit and push all changes to GitHub
