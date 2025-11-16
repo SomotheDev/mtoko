@@ -95,3 +95,8 @@
 - [x] Update Home.tsx to display category images
 - [x] Test category section display
 - [x] Commit and push changes to GitHub
+
+## Price Update to Realistic Tzs Values
+- [x] Update product prices in database to thousands of Tzs (realistic apparel pricing)
+- [x] Test price display across all pages
+- [ ] Commit and push changes to GitHub
