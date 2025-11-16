@@ -107,4 +107,4 @@
 - [x] Implement search input in header with live search
 - [x] Add search icon and functionality
 - [x] Test search with various queries
-- [ ] Commit and push changes to GitHub
+- [x] Commit and push changes to GitHub
